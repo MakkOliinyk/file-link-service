@@ -1,0 +1,24 @@
+{
+  "name": "file-link-service",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MakkOliinyk/file-link-service.git"
+  },
+  "author": "Mark Oliinyk",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/MakkOliinyk/file-link-service/issues"
+  },
+  "homepage": "https://github.com/MakkOliinyk/file-link-service#readme",
+  "dependencies": {
+    "fastify": "^4.17.0",
+    "fastify-plugin": "^4.5.0",
+    "firebase-admin": "^11.8.0"
+  }
+}
