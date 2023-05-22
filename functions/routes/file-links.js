@@ -1,41 +1,45 @@
-import { v4 as uuidv4 } from 'uuid';
+const { v4 } = require('uuid');
 
 async function getFileId(linkId) {
     const { db } = this;
 
-    const snapshot = await db.ref('fileLinks').child(linkId).once('value');
-    const fileLink = snapshot.val();
+    const snapshot = await db.collection('links').doc(linkId).get();
+    const fileLink = snapshot.data();
 
     if (!fileLink) return null;
 
     return { fileId: fileLink.fileId };
 }
 
-async function getFileLink(fileId) {
+async function getFileLink(fileId, ownerId) {
     const { db } = this;
 
-    const snapshot = await db.ref('fileLinks').orderByChild('fileId').equalTo(fileId).once('value');
-    const fileLink = snapshot.val();
+    const querySnapshot = await db.collection('links').where('fileId', '==', fileId).get();
+    const fileLinks = [];
 
-    if (fileLink) return fileLink;
+    querySnapshot.forEach(doc => {
+        fileLinks.push(doc.data());
+    });
 
-    const linkId = generateLinkId();
-    await db.ref('fileLinks').child(linkId).set({ id: linkId, fileId });
+    if (fileLinks.length > 0) return fileLinks[0];
 
-    return { linkId };
+    const link = generateLinkId();
+    await db.collection('links').doc(link).set({ link, fileId, ownerId });
+
+    return { link };
 }
 
 function generateLinkId() {
-    return uuidv4();
+    return v4();
 }
 
 const routes = async (fastify) => {
     fastify.post('/links', async (request, reply) => {
-        const { fileId } = request.query; // move to body
+        const { fileId, ownerId } = request.body;
 
         if (!fileId) return reply.code(400).send('File ID is required');
 
-        const fileLink = await getFileLink.call(fastify, fileId);
+        const fileLink = await getFileLink.call(fastify, fileId, ownerId);
 
         reply.send(fileLink);
     });
@@ -51,8 +55,6 @@ const routes = async (fastify) => {
 
         reply.send({ fileId });
     });
-}
+};
 
-export default routes;
-
-
+module.exports = routes;
