@@ -8,6 +8,6 @@ admin.initializeApp({
     databaseURL: 'https://CHANGE_ME.firebaseio.com',
 });
 
-export default async function (fastify, options) {
+export default async function (fastify) {
     fastify.decorate('db', admin.database());
 }

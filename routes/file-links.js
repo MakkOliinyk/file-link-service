@@ -30,8 +30,8 @@ function generateLinkId() {
 }
 
 const routes = async (fastify) => {
-    fastify.get('/getLink', async (request, reply) => {
-        const { fileId } = request.query;
+    fastify.post('/links', async (request, reply) => {
+        const { fileId } = request.query; // move to body
 
         if (!fileId) return reply.code(400).send('File ID is required');
 
@@ -40,7 +40,7 @@ const routes = async (fastify) => {
         reply.send(fileLink);
     });
 
-    fastify.get('/getFileId/:linkId', async (request, reply) => {
+    fastify.get('/links/:linkId', async (request, reply) => {
         const { linkId } = request.params;
 
         if (!linkId) return reply.code(400).send('Link ID is required');
