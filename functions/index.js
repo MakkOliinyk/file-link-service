@@ -8,7 +8,6 @@ const app = fastify({ logger: true });
 app.decorate('db', getFirestoreInstance());
 app.register(files, { db: app.db });
 
-// Define the Firebase Functions HTTP handler
 const handler = async (req, res) => {
     try {
         await app.ready();
@@ -19,5 +18,4 @@ const handler = async (req, res) => {
     }
 };
 
-// Export the handler as the Firebase callable function
 exports.app = functions.https.onRequest(handler);
