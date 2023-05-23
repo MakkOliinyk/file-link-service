@@ -1,21 +1,28 @@
 const functions = require('firebase-functions');
 const fastify = require('fastify');
-const files = require('./routes/file-links');
+const links = require('./routes/file-links');
 const { getFirestoreInstance } = require('./config/dbconnector');
 
-const app = fastify({ logger: true });
+let requestHandler = null;
+
+const app = fastify({
+    logger: true,
+    serverFactory: (handler) => {
+        requestHandler = handler;
+        return require('http').createServer();
+    },
+});
+
+app.addContentTypeParser('application/json', {}, (req, body, done) => {
+    done(null, body.body);
+});
 
 app.decorate('db', getFirestoreInstance());
-app.register(files, { db: app.db });
+app.register(links, { db: app.db });
 
-const handler = async (req, res) => {
-    try {
-        await app.ready();
-        app.server.emit('request', req, res);
-    } catch (err) {
-        console.error(err);
-        res.sendStatus(500);
-    }
-};
-
-exports.app = functions.https.onRequest(handler);
+exports.app = functions.https.onRequest((req, res) => {
+    app.ready((err) => {
+        if (err) throw err;
+        requestHandler(req, res);
+    });
+});
