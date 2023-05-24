@@ -1,7 +1,9 @@
 const functions = require('firebase-functions');
 const fastify = require('fastify');
-const links = require('./routes/file-links');
+
 const { getFirestoreInstance } = require('./config/dbconnector');
+const links = require('./routes/file-links');
+const getFileLinkUtils = require('./utils');
 
 let requestHandler = null;
 
@@ -18,6 +20,7 @@ app.addContentTypeParser('application/json', {}, (req, body, done) => {
 });
 
 app.decorate('db', getFirestoreInstance());
+app.decorate('FileLinks', getFileLinkUtils(app.db));
 app.register(links, { db: app.db });
 
 exports.app = functions.https.onRequest((req, res) => {
