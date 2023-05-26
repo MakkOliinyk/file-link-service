@@ -25,10 +25,10 @@ const FileLinkUtils = (db) => {
 
             if (fileLinks.length > 0) return fileLinks[0];
 
-            const link = generateLinkId();
-            await db.collection('links').doc(link).set({ link, fileId, ownerId });
+            const link = this.generateLinkId();
+            await collection.doc(link).set({ link, fileId, ownerId });
 
-            return { link };
+            return link;
         },
         generateLinkId: function() {
             return v4();

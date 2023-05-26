@@ -1,5 +1,5 @@
-const functions = require('firebase-functions');
 const fastify = require('fastify');
+const functions = require('firebase-functions');
 
 const { getFirestoreInstance } = require('./config/dbconnector');
 const links = require('./routes/file-links');
